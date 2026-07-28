@@ -77,9 +77,37 @@ print(tcolors.RED+bcolors.BLACK,"Tensorflow-Version:", tf.__version__, tcolors.E
 #                                      batch_size=1, path=decoder_checkpoint_path)
 
 #######################################################
+######   Download the decoder model if missing    ######
+#######################################################
+# The decoder model (~223MB) exceeds GitHub's 100MB push limit, so it isn't
+# committed to this repo - it's hosted on the Hugging Face Hub instead and
+# fetched once here if not already present on disk.
+_DECODER_MODEL_DIR = Path(__file__).resolve().parent.parent / "Tools_stega89_de1" / "tfLite_stampone89_deocder"
+_DECODER_MODEL_NAME = "StampOne_decoder_v89_infl32_float32.tflite"
+_DECODER_MODEL_PATH = _DECODER_MODEL_DIR / _DECODER_MODEL_NAME
+_DECODER_MODEL_URL = (
+    "https://huggingface.co/farhadsh1992/stampone-decoder/resolve/main/"
+    + _DECODER_MODEL_NAME
+)
+
+if not _DECODER_MODEL_PATH.exists():
+    import urllib.request
+
+    print(tcolors.Orange, f"Downloading decoder model from {_DECODER_MODEL_URL} ...", tcolors.ENDC)
+    _DECODER_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve(_DECODER_MODEL_URL, _DECODER_MODEL_PATH)
+    print(tcolors.GREEN, "Decoder model downloaded.", tcolors.ENDC)
+
+
+#######################################################
 ######        Load TFLite StampOne Router         ######
 #######################################################
-with tf.device("gpu:1"):
+# Runs on CPU by default - only pin to a GPU device if one is actually
+# present (this app has previously only run on a lab server with 2+ GPUs,
+# which "gpu:1" assumed; that crashes on any single-GPU or CPU-only host).
+_INFERENCE_DEVICE = "gpu:0" if tf.config.list_physical_devices("GPU") else "cpu:0"
+
+with tf.device(_INFERENCE_DEVICE):
     from Tools_stega89_de1.tools_TFLite_decoder import TFLite_Decoder_Loader
     STAMPONE_DECODER  = TFLite_Decoder_Loader()
 
@@ -87,7 +115,7 @@ with tf.device("gpu:1"):
 #######################################################
 ######        Load Detection Router         ######
 #######################################################
-with tf.device("gpu:1"):
+with tf.device(_INFERENCE_DEVICE):
     DETECT_ROUTER = Detection_Models()
 
 #######################################################
@@ -109,7 +137,8 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
+# Defaults to False now - set DJANGO_DEBUG=True explicitly for local development.
+DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
@@ -127,6 +156,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -213,6 +243,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #######################################################
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 #######################################################
 ######                                       ######

@@ -119,14 +119,19 @@ def BCH_Reader( secret, BCH_BITS, BCH_POLYNOMIAL, bits = 96):
 
   
     #print(secret)
-    bch = bchlib.BCH(BCH_POLYNOMIAL, BCH_BITS)
+    # bchlib >=1.0 swapped the constructor to BCH(t, prim_poly=...) (was
+    # BCH(prim_poly, t) in 0.14) and split decode_inplace() into decode()
+    # (returns nerr, read-only) + correct() (applies the fix in place).
+    bch = bchlib.BCH(BCH_BITS, prim_poly=BCH_POLYNOMIAL)
     packet_binary = "".join([str(int(bit)) for bit in secret[:bits]])
     packet = bytes(int(packet_binary[i : i + 8], 2) for i in range(0, len(packet_binary), 8))
     packet = bytearray(packet)
-    
-    
+
+
     data, ecc = packet[:-bch.ecc_bytes], packet[-bch.ecc_bytes:]
-    bitflips = bch.decode_inplace(data, ecc)
+    bitflips = bch.decode(data, ecc)
+    if bitflips >= 0:
+        bch.correct(data, ecc)
   
     try:
         decoded_msg = data.decode("utf-8")
