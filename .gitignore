@@ -1,0 +1,29 @@
+# Broken/foreign venvs - this project root doubles as one (lib/, lib64/, include/,
+# share/, pyvenv.cfg sit next to manage.py), plus there's a venv/ subfolder too.
+# Neither works on a fresh machine; see help_running.text.
+venv/
+lib/
+lib64/
+include/
+share/
+pyvenv.cfg
+
+# Python
+__pycache__/
+*.pyc
+
+# Django runtime
+db.sqlite3
+
+# User-captured / generated test images (may contain personal photos)
+media/
+ImagesCroped_encoded_Image.jpg
+
+# Large AI model weights - exceed GitHub's 100MB push limit.
+# Not included in this repo; place your own copies at these paths to run the app.
+Tools_stega89_de1/tfLite_stampone89_deocder/StampOne_decoder_v89_infl32_float32.tflite
+Tools_stega89_de1/tfLite_stampone89_deocder/StampOne_decoder_v89_intfl32_float16.tflite
+**/256_256_resfcn256_weight.data-00000-of-00001
+
+# OS
+.DS_Store

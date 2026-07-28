@@ -1,0 +1,26 @@
+
+Django
+opencv-python
+Tensorflow == 2.15
+keras==3.1
+pendulum
+psutil
+pyqart
+qrcode
+lmdb
+numpy
+onnxruntime
+ninja
+imageio
+tensorflow_wavelets
+bchlib==0.14
+scikit-image
+matplotlib
+PyWavelets
+
+#########################################################
+# pip install -r requirements.txt
+#########################################################
+## python manage.py runserver 193.136.230.30:8001
+#########################################################
+#########################################################
