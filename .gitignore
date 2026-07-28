@@ -2,11 +2,15 @@
 # share/, pyvenv.cfg sit next to manage.py), plus there's a venv/ subfolder too.
 # Neither works on a fresh machine; see help_running.text.
 venv/
+.venv_clean/
 lib/
 lib64/
 include/
 share/
 pyvenv.cfg
+
+# collectstatic output
+staticfiles/
 
 # Python
 __pycache__/
