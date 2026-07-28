@@ -1,5 +1,6 @@
 
 Django
+python-dotenv
 opencv-python
 Tensorflow == 2.15
 keras==3.1

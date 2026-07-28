@@ -10,14 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 ##############################################
-##djago defult 
+##djago defult
 from pathlib import Path
+##############################################
+import os
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 ##############################################
 ## deep pakages
 import tensorflow as tf
-import keras 
+import keras
 ##############################################
-import os 
 from FarhadCV.Tools import tcolors, bcolors
 ##############################################
 ## Load encoder:
@@ -98,12 +101,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0qsnv#)f6&j2y2zo!gzzdrl%nb1ksaa)19ki4u)-_mv9j=e9$d'
+# Set DJANGO_SECRET_KEY in the environment (or a local .env file) for real deployments.
+# The fallback below is only for local development.
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-0qsnv#)f6&j2y2zo!gzzdrl%nb1ksaa)19ki4u)-_mv9j=e9$d",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
 
 # Application definition

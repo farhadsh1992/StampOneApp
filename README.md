@@ -38,6 +38,16 @@ Then open http://127.0.0.1:8000/ in a browser.
 
 See [help_running.text](help_running.text) for background on why this project needs its own environment (the original `venv/` in this repo was built on a different machine and won't run as-is).
 
+### Configuration (for deployment)
+
+`core/settings.py` reads `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS` from environment variables (via a `.env` file, loaded with `python-dotenv`), falling back to the original insecure dev defaults when unset — so local runs need no setup. Before deploying publicly:
+
+1. Copy `.env.example` to `.env`.
+2. Generate a real secret key: `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`
+3. Set `DJANGO_SECRET_KEY` to that value, `DJANGO_DEBUG=False`, and `DJANGO_ALLOWED_HOSTS` to your real domain(s).
+
+`.env` is gitignored — never commit real secrets.
+
 ### Model files
 
 Two large model files (the StampOne decoder `.tflite` weights and the PRNet face-detection weight file) are **not included in this repository** — they exceed GitHub's 100MB file size limit. To run the app, place your own copies at:
