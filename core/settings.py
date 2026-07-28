@@ -266,6 +266,13 @@ FACE_URL = "/media/Encoded_faces/"
 ENC_ROOT = os.path.join(BASE_DIR, 'media/Encoded_images')
 FACE_ROOT = os.path.join(BASE_DIR, 'media/Encoded_faces')
 
+# media/ is gitignored (may contain uploaded photos) and won't exist on a
+# fresh deploy. Django's FileSystemStorage auto-creates MEDIA_ROOT, but
+# core/views.py also writes here directly via cv2.imwrite(), which does not
+# create missing directories and fails silently if they're absent.
+os.makedirs(ENC_ROOT, exist_ok=True)
+os.makedirs(FACE_ROOT, exist_ok=True)
+
 
 
 # Default primary key field type
