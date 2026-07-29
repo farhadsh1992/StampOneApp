@@ -57,7 +57,7 @@ def index(request):
             ##########################################
             fs = FileSystemStorage()
             file_name = fs.save(request_file.name, request_file)
-            file_url = fs.url(file_name)
+            file_path = fs.path(file_name)
 
             # image = request.FILES["imageFile"].read()
             # imgtest = b64encode(image)
@@ -75,10 +75,10 @@ def index(request):
             #########################################
             ## Read Image:
             try:
-                imgtest = cv2.imread(f'.{file_url}')
+                imgtest = cv2.imread(file_path)
                 imgtest = cv2.cvtColor(imgtest, cv2.COLOR_BGR2RGB)
             except:
-                cap = cv2.VideoCapture(f'.{file_url}')
+                cap = cv2.VideoCapture(file_path)
                 ret, imgtest = cap.read()
                 print(tcolors.BLUE, imgtest.shape, tcolors.ENDC)
 

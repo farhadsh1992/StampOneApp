@@ -16,13 +16,13 @@ Including another URLconf
 """
 #######################################################
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.urls import include
 
 #######################################################
 ## I added
 from django.conf import settings
-from django.conf.urls.static import static 
+from django.views.static import serve
 
 
 from . import views
@@ -43,10 +43,15 @@ urlpatterns = [
 #######################################################
 ######                                       ######
 #######################################################
-## allow us to set our url that we need it 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.IMAGES_URL, document_root=settings.IMAGES_ROOT)
-    urlpatterns += static(settings.ENC_URL, document_root=settings.ENC_ROOT)
-    urlpatterns += static(settings.FACE_URL, document_root=settings.FACE_ROOT)
+## Serve uploaded/decoded images directly via django.views.static.serve.
+## django.conf.urls.static.static() looks like the "normal" way to do this, but
+## it silently no-ops whenever settings.DEBUG is False - and DEBUG is False in
+## production here, with no separate media server/CDN configured (whitenoise
+## only covers STATIC_URL, not these). Wiring `serve` directly bypasses that
+## DEBUG gate - a pragmatic choice for a small single-instance app.
+urlpatterns += [
+    re_path(r"^media/Encoded_images/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    re_path(r"^media/Encoded_faces/(?P<path>.*)$", serve, {"document_root": settings.FACE_ROOT}),
+    re_path(r"^Images/(?P<path>.*)$", serve, {"document_root": settings.IMAGES_ROOT}),
+]
 
