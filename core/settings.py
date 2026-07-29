@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 ##############################################
 import os
+import shutil
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 ##############################################
@@ -272,6 +273,26 @@ FACE_ROOT = os.path.join(BASE_DIR, 'media/Encoded_faces')
 # create missing directories and fails silently if they're absent.
 os.makedirs(ENC_ROOT, exist_ok=True)
 os.makedirs(FACE_ROOT, exist_ok=True)
+
+# Thumbnail subfolders - core/views.py additionally saves a downscaled copy
+# of each result image here, purely for on-screen display. Detection/decoding
+# always reads the full-resolution files above, so this has no effect on
+# decode accuracy, only on how much image data the browser has to download.
+ENC_THUMB_ROOT = os.path.join(ENC_ROOT, "thumbs")
+FACE_THUMB_ROOT = os.path.join(FACE_ROOT, "thumbs")
+os.makedirs(ENC_THUMB_ROOT, exist_ok=True)
+os.makedirs(FACE_THUMB_ROOT, exist_ok=True)
+
+# Seed the "no image decoded yet" placeholder everywhere the template can
+# reference it from. Images/No-Image.png is the only copy actually committed
+# to git (media/ is gitignored), so a fresh deploy has nothing there otherwise.
+_placeholder_src = os.path.join(IMAGES_ROOT, "No-Image.png")
+_placeholder_name = "ZNo-Image.png"
+if os.path.exists(_placeholder_src):
+    for _dir in (ENC_ROOT, FACE_ROOT, ENC_THUMB_ROOT, FACE_THUMB_ROOT):
+        _dst = os.path.join(_dir, _placeholder_name)
+        if not os.path.exists(_dst):
+            shutil.copyfile(_placeholder_src, _dst)
 
 
 

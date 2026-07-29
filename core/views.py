@@ -31,6 +31,23 @@ from django import forms
 #######################################################
 ######                                       ######
 #######################################################
+_THUMB_MAX_DIM = 800
+
+
+def _save_thumbnail(img_bgr, path, max_dim=_THUMB_MAX_DIM):
+    """Write a downscaled copy of img_bgr to path, purely for on-screen
+    display. Detection/decoding always run on the full-resolution image
+    passed in elsewhere, so this never touches decode accuracy."""
+    h, w = img_bgr.shape[:2]
+    scale = min(1.0, max_dim / max(h, w))
+    if scale < 1.0:
+        img_bgr = cv2.resize(img_bgr, (int(w * scale), int(h * scale)))
+    cv2.imwrite(path, img_bgr)
+
+
+#######################################################
+######                                       ######
+#######################################################
 def splash(request):
     return render(request, 'splash.html')
 
@@ -98,7 +115,15 @@ def index(request):
             croped_face2 = cv2.resize(croped_face2, (size_img[1], size_img[0]))
             cv2.imwrite(f"./media/Encoded_faces/{file_name}", croped_face2)
 
-          
+            ##########################################
+            ## Downscaled copies for the on-screen "Encoded Image" /
+            ## "Detected Region" cards only - decoding below always uses the
+            ## full-resolution imgtest/croped_face, so this cannot affect
+            ## decode accuracy.
+            _save_thumbnail(cv2.cvtColor(imgtest, cv2.COLOR_RGB2BGR), f"./media/Encoded_images/thumbs/{file_name}")
+            _save_thumbnail(croped_face2, f"./media/Encoded_faces/thumbs/{file_name}")
+
+
             ##########################################
             ## Run StampOne Decoder
             binery_message = settings.STAMPONE_DECODER(croped_face)
