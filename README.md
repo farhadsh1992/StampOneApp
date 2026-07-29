@@ -1,3 +1,7 @@
+🚀 [Online app in render] (https://stamponeapp.onrender.com)
+🚀 [Online app in server of lan] (https://stampone.isr.uc.pt)
+
+
 # StampOne Decoder
 
 A Django web app that detects and decodes invisible watermarks (steganographic messages) embedded in photos, using the **StampOne v89** model (256-bit message, AttentionVNet architecture). Built by [VisTeam, ISR-UC](https://visteam.isr.uc.pt/home). Project docs: https://farhadsh1992.github.io/StampOne/
