@@ -8,9 +8,15 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   </head>
   <body class="splash-body">
-    <a href="{% url 'home' %}" class="splash-link" aria-label="Enter StampOne Decoder">
+    <div class="splash-content">
       <img src="{% static 'img/StampOne_logo.png' %}" class="splash-logo" alt="StampOne">
-      <p class="splash-hint">Tap to continue</p>
-    </a>
+      <div class="splash-actions">
+        <button type="button" class="splash-btn splash-btn-disabled" disabled>
+          Encoder App
+          <span class="splash-btn-badge">Coming soon</span>
+        </button>
+        <a href="{% url 'home' %}" class="splash-btn splash-btn-primary">Decoder App</a>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const THEME_KEY = 'stampone-theme';
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const next = isLight ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(THEME_KEY, next);
+    });
+  }
+
   const cameraBtn = document.getElementById('cameraBtn');
   const galleryBtn = document.getElementById('galleryBtn');
   const galleryInput = document.getElementById('galleryInput');
