@@ -1,6 +1,6 @@
-🚀 [Online app in render] (https://stamponeapp.onrender.com)
+🚀 [Online app in render](https://stamponeapp.onrender.com)
 
-🚀 [Online app in server of lan] (https://stampone.isr.uc.pt)
+🚀 [Online app in server of lan](https://stampone.isr.uc.pt)
 
 
 # StampOne Decoder
